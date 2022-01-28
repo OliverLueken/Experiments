@@ -7,7 +7,7 @@ auto lambda2 = [](){ std::cout << "2\n"; };
 auto lambda3 = [](){ std::cout << "3\n"; };
 
 int main(){
-    std::vector<void(*)()> lambdas{lambda1, lambda3, lambda2};
+    std::vector<void(*)()> lambdas{lambda1, lambda3, lambda2, []{std::cout << "4\n";}};
 
     // for(const auto& lambda : lambdas){
     //     lambda();
@@ -21,4 +21,5 @@ program output:
 1
 3
 2
+4
 */
