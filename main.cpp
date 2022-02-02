@@ -1,19 +1,34 @@
-#include <cstdio>
+#include <iostream>
 
 struct S {
-    S() { puts("S()"); }
+    int id{0};
+    static int count;
 
-    S(const S &) { puts("S(const S &)"); }
-    S &operator=(const S &) {
-        puts("operator=(const S &)");
+    S() {
+        id=++count;
+        std::cout << "S" << id << "()\n";
+    }
+
+    S(const S & other) {
+        id=++count;
+        std::cout << "S" << id << "(const S" << other.id << " &)\n";
+    }
+    S &operator=(const S & other) {
+        std::cout << "S" << id << " operator=(const S" << other.id << " &)\n";
         return *this;
     }
 
-    S(S &&) { puts("S(S &&)"); }
-    S &operator=(S &&) {
-        puts("operator=(S &&)");
+    S(S && other) {
+        id=++count;
+        std::cout << "S" << id << "(S" << other.id << " &&)\n";
+    }
+    S &operator=(S && other) {
+        std::cout << "S" << id << " operator=(const S" << other.id << " &&)\n";
         return *this;
     }
 
-    ~S() { puts("~S()"); }
+    ~S() {
+        std::cout << "~S" << id << "()\n";
+    }
 };
+int S::count = 0;
