@@ -11,7 +11,7 @@
 int main() {
     std::vector<int> v1{1,2};
     std::vector<S> v2{};
-    //v2.reserve(2);
+    //v2.reserve(v1.size());
     std::ranges::transform(v1, std::back_inserter(v2), [](const auto&){
         return S{}; //constructs and moves into vector
     });
@@ -32,6 +32,6 @@ S5(S2 &&) //move S2 into bigger vector, preventable by reserving enough space be
 ~S3()
 5
 4
-~S5()
+~S5() //destructs objects in vector from left to right
 ~S4()
 */
