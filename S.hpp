@@ -1,3 +1,6 @@
+#ifndef S_HPP
+#define S_HPP
+
 #include <iostream>
 
 struct S {
@@ -32,3 +35,5 @@ struct S {
     }
 };
 int S::count = 0;
+
+#endif
