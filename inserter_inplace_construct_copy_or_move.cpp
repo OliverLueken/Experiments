@@ -9,8 +9,9 @@
 
 
 int main() {
-    std::vector<int> v1{1,2,3};
+    std::vector<int> v1{1,2};
     std::vector<S> v2{};
+    //v2.reserve(2);
     std::ranges::transform(v1, std::back_inserter(v2), [](const auto&){
         return S{}; //constructs and moves into vector
     });
@@ -26,7 +27,7 @@ S2(S1 &&)
 ~S1()
 S3()
 S4(S3 &&)
-S5(S2 &&) //move S2 into bigger vector
+S5(S2 &&) //move S2 into bigger vector, preventable by reserving enough space beforehand
 ~S2()
 ~S3()
 5
