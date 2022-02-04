@@ -18,11 +18,11 @@ struct S {
         return *this;
     }
 
-    S(S && other) {
+    S(S && other) noexcept {
         id=++count;
         std::cout << "S" << id << "(S" << other.id << " &&)\n";
     }
-    S &operator=(S && other) {
+    S &operator=(S && other) noexcept {
         std::cout << "S" << id << " operator=(const S" << other.id << " &&)\n";
         return *this;
     }
