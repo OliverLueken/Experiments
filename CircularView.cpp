@@ -13,8 +13,8 @@ class _CircularView : public std::ranges::view_interface<_CircularView<Range>> {
         RangeIteratorType lastIt{};
     public:
         constexpr CircularIterator() = default;
-        constexpr CircularIterator(Range& vec)
-        : RangeIteratorType{vec.begin()}, firstIt{vec.begin()}, lastIt{vec.end()}{}
+        constexpr CircularIterator(Range& range)
+        : RangeIteratorType{range.begin()}, firstIt{range.begin()}, lastIt{range.end()}{}
 
         constexpr bool operator==(std::unreachable_sentinel_t){return false;}
 
