@@ -12,6 +12,7 @@ class _CircularView : public std::ranges::view_interface<_CircularView<Range>> {
         RangeIteratorType firstIt{};
         RangeIteratorType lastIt{};
     public:
+        constexpr CircularIterator() = default;
         constexpr CircularIterator(Range& vec)
         : RangeIteratorType{vec.begin()}, firstIt{vec.begin()}, lastIt{vec.end()}{}
 
@@ -109,6 +110,15 @@ int main() {
         if(count == 12) break;
     }
     std::cout << '\n';
+
+    std::cout << "Dropping after circling\n";
+    count = 1;
+    for(const auto& val : vec | CircularView | std::views::drop(2) ){
+        std::cout << count << ". value in circular view is " << val.id << '\n';
+        ++count;
+        if(count == 12) break;
+    }
+    std::cout << '\n';
 }
 
 /*
@@ -170,11 +180,25 @@ Dropping before circling
 10. value in circular view is 3
 11. value in circular view is 4
 
+Dropping after circling
+1. value in circular view is 3
+2. value in circular view is 4
+3. value in circular view is 5
+4. value in circular view is 1
+5. value in circular view is 2
+6. value in circular view is 3
+7. value in circular view is 4
+8. value in circular view is 5
+9. value in circular view is 1
+10. value in circular view is 2
+11. value in circular view is 3
+
 ~S1()
 ~S2()
 ~S3()
 ~S4()
 ~S5()
+
 
 
 
