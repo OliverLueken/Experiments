@@ -39,11 +39,11 @@ int main() {
     auto vec = std::vector<S>(5);
 
     auto circ = CircularView{vec};
-    auto count = 0;
+    auto count = 1;
     for(const auto& val : circ){
-        std::cout << val.id << '\n';
+        std::cout << count << ". value in circular view is " << val.id << '\n';
         ++count;
-        if(count == 16) break;
+        if(count == 17) break;
     }
 }
 
@@ -55,22 +55,23 @@ S2()
 S3()
 S4()
 S5()
-1
-2
+1. value in circular view is 1
+2. value in circular view is 2
+3. value in circular view is 3
+4. value in circular view is 4
+5. value in circular view is 5
+6. value in circular view is 1
+7. value in circular view is 2
+8. value in circular view is 3
+9. value in circular view is 4
+10. value in circular view is 5
+11. value in circular view is 1
+12. value in circular view is 2
+13. value in circular view is 3
+14. value in circular view is 4
+15. value in circular view is 5
+16. value in circular view is 1
 3
-4
-5
-1
-2
-3
-4
-5
-1
-2
-3
-4
-5
-1
 ~S1()
 ~S2()
 ~S3()
