@@ -32,7 +32,11 @@ class _CircularView : public std::ranges::view_interface<_CircularView<Range>> {
             return temp;
         }
 
-        constexpr auto& operator+=(int i){
+        constexpr auto& operator+=(long i){
+            i%=std::distance(firstIt, lastIt);
+            if(i > std::distance(static_cast<RangeIteratorType>(*this), lastIt) ){
+                RangeIteratorType::operator=(firstIt+i-std::distance(static_cast<RangeIteratorType>(*this), lastIt));
+            }
             RangeIteratorType::operator+=(i);
             return *this;
         }
@@ -83,14 +87,18 @@ int main() {
     std::cout << '\n';
 
     auto it = circ.begin();
-    it+=2;
+    it+=7;
     std::cout << "Testing operator+=(): ";
     std::cout << it->id << "==3 is " << std::boolalpha << (it->id==3) << '\n';
     std::cout << '\n';
 
-    std::cout << "Testing operator++(int): ";
+    std::cout << "Testing operator++(int):\n";
     auto prevVal = it++->id;
     std::cout << prevVal <<"==3 and " << it->id << "==4 is " << std::boolalpha << (prevVal==3 && it->id==4) << '\n';
+    prevVal = it++->id;
+    std::cout << prevVal <<"==4 and " << it->id << "==5 is " << std::boolalpha << (prevVal==4 && it->id==5) << '\n';
+    prevVal = it++->id;
+    std::cout << prevVal <<"==5 and " << it->id << "==1 is " << std::boolalpha << (prevVal==5 && it->id==1) << '\n';
     std::cout << '\n';
 
     std::cout << "Circling with pipe operator\n";
@@ -152,7 +160,10 @@ unreachable_sentinel == begin() is false
 
 Testing operator+=(): 3==3 is true
 
-Testing operator++(int): 3==3 and 4==4 is true
+Testing operator++(int):
+3==3 and 4==4 is true
+4==4 and 5==5 is true
+5==5 and 1==1 is true
 
 Circling with pipe operator
 1. value in circular view is 1
@@ -198,6 +209,7 @@ Dropping after circling
 ~S3()
 ~S4()
 ~S5()
+
 
 
 
