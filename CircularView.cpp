@@ -12,29 +12,36 @@ class _CircularView : public std::ranges::view_interface<_CircularView<Range>> {
         RangeIteratorType firstIt{};
         RangeIteratorType lastIt{};
     public:
-        CircularIterator(Range& vec)
+        constexpr CircularIterator(Range& vec)
         : RangeIteratorType{vec.begin()}, firstIt{vec.begin()}, lastIt{vec.end()}{}
 
-        bool operator==(std::unreachable_sentinel_t){return false;}
+        constexpr bool operator==(std::unreachable_sentinel_t){return false;}
 
-        auto operator++(){
+        constexpr auto& operator++(){
             RangeIteratorType::operator++();
             if(static_cast<RangeIteratorType>(*this) == lastIt){
                 RangeIteratorType::operator=(firstIt);
             }
+            return *this;
         }
 
-        auto operator++(int){
+        constexpr auto operator++(int){
             CircularIterator temp{*this};
             ++*this;
             return temp;
+        }
+
+        constexpr auto& operator+=(int i){
+            RangeIteratorType::operator+=(i);
+            return *this;
         }
     };
 
     CircularIterator iter;
 public:
-    _CircularView(Range& vec)
-    : iter{vec}
+    _CircularView() = default;
+    _CircularView(Range range)
+    : iter{range}
     {}
 
     CircularIterator begin() const {return iter; }
@@ -43,24 +50,25 @@ public:
 
 
 struct CircularViewAdaptor{
-    template <std::ranges::range R>
-    constexpr auto operator()(R && r) const
+    template<std::ranges::range Range>
+    constexpr auto operator()(Range&& r) const
     {
-        return _CircularView<R>(std::forward<R>(r));
+        return _CircularView<Range>(std::forward<Range>(r));
     }
 };
 CircularViewAdaptor CircularView;
 
-template <std::ranges::range R>
-constexpr auto operator |(R&& r, const CircularViewAdaptor& a)
+template<std::ranges::range Range>
+constexpr auto operator|(Range&& r, const CircularViewAdaptor& a)
 {
-    return a(std::forward<R>(r)) ;
+    return a(std::forward<Range>(r)) ;
 }
 
 
 int main() {
     auto vec = std::vector<S>(5);
 
+    std::cout << "\nCircling over circlular view\n";
     auto circ = CircularView(vec);
     auto count = 1;
     for(const auto& val : circ){
@@ -84,8 +92,18 @@ int main() {
     std::cout << prevVal <<"==3 and " << it->id << "==4 is " << std::boolalpha << (prevVal==3 && it->id==4) << '\n';
     std::cout << '\n';
 
+    std::cout << "Circling with pipe operator\n";
     count = 1;
     for(const auto& val : vec | CircularView ){
+        std::cout << count << ". value in circular view is " << val.id << '\n';
+        ++count;
+        if(count == 12) break;
+    }
+    std::cout << '\n';
+
+    std::cout << "Dropping before circling\n";
+    count = 1;
+    for(const auto& val : vec | std::views::drop(2) | CircularView ){
         std::cout << count << ". value in circular view is " << val.id << '\n';
         ++count;
         if(count == 12) break;
@@ -101,6 +119,8 @@ S2()
 S3()
 S4()
 S5()
+
+Circling over circlular view
 1. value in circular view is 1
 2. value in circular view is 2
 3. value in circular view is 3
@@ -124,6 +144,7 @@ Testing operator+=(): 3==3 is true
 
 Testing operator++(int): 3==3 and 4==4 is true
 
+Circling with pipe operator
 1. value in circular view is 1
 2. value in circular view is 2
 3. value in circular view is 3
@@ -136,11 +157,25 @@ Testing operator++(int): 3==3 and 4==4 is true
 10. value in circular view is 5
 11. value in circular view is 1
 
+Dropping before circling
+1. value in circular view is 3
+2. value in circular view is 4
+3. value in circular view is 5
+4. value in circular view is 3
+5. value in circular view is 4
+6. value in circular view is 5
+7. value in circular view is 3
+8. value in circular view is 4
+9. value in circular view is 5
+10. value in circular view is 3
+11. value in circular view is 4
+
 ~S1()
 ~S2()
 ~S3()
 ~S4()
 ~S5()
+
 
 
 */
