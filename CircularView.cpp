@@ -6,7 +6,7 @@
 #include <iomanip>
 
 template<std::ranges::range Range>
-class CircularView : public std::ranges::view_interface<CircularView<Range>> {
+class _CircularView : public std::ranges::view_interface<_CircularView<Range>> {
     using RangeIteratorType = std::ranges::iterator_t<Range>;
     class CircularIterator : public RangeIteratorType{
         RangeIteratorType firstIt{};
@@ -33,7 +33,7 @@ class CircularView : public std::ranges::view_interface<CircularView<Range>> {
 
     CircularIterator iter;
 public:
-    CircularView(Range& vec)
+    _CircularView(Range& vec)
     : iter{vec}
     {}
 
@@ -41,10 +41,27 @@ public:
     auto             end()   const {return std::unreachable_sentinel; }
 };
 
+
+struct CircularViewAdaptor{
+    template <std::ranges::range R>
+    constexpr auto operator()(R && r) const
+    {
+        return _CircularView<R>(std::forward<R>(r));
+    }
+};
+CircularViewAdaptor CircularView;
+
+template <std::ranges::range R>
+constexpr auto operator |(R&& r, const CircularViewAdaptor& a)
+{
+    return a(std::forward<R>(r)) ;
+}
+
+
 int main() {
     auto vec = std::vector<S>(5);
 
-    auto circ = CircularView{vec};
+    auto circ = CircularView(vec);
     auto count = 1;
     for(const auto& val : circ){
         std::cout << count << ". value in circular view is " << val.id << '\n';
@@ -59,6 +76,13 @@ int main() {
     std::cout << it->id << '\n';
 
     std::cout << it++->id << ' ' << it->id << '\n';
+
+    count = 1;
+    for(const auto& val : vec | CircularView ){
+        std::cout << count << ". value in circular view is " << val.id << '\n';
+        ++count;
+        if(count == 12) break;
+    }
 }
 
 /*
@@ -88,6 +112,17 @@ S5()
 unreachable_sentinel == begin() is false
 3
 3 4
+1. value in circular view is 1
+2. value in circular view is 2
+3. value in circular view is 3
+4. value in circular view is 4
+5. value in circular view is 5
+6. value in circular view is 1
+7. value in circular view is 2
+8. value in circular view is 3
+9. value in circular view is 4
+10. value in circular view is 5
+11. value in circular view is 1
 ~S1()
 ~S2()
 ~S3()
