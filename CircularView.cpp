@@ -5,7 +5,7 @@
 #include "S.hpp"
 #include <iomanip>
 
-template<std::ranges::range Range>
+template<std::ranges::forward_range Range>
 class _CircularView : public std::ranges::view_interface<_CircularView<Range>> {
     using RangeIteratorType = std::ranges::iterator_t<Range>;
     class CircularIterator : public RangeIteratorType{
@@ -51,7 +51,7 @@ public:
 
 
 struct CircularViewAdaptor{
-    template<std::ranges::range Range>
+    template<std::ranges::viewable_range Range>
     constexpr auto operator()(Range&& r) const
     {
         return _CircularView<Range>(std::forward<Range>(r));
@@ -59,7 +59,7 @@ struct CircularViewAdaptor{
 };
 CircularViewAdaptor CircularView;
 
-template<std::ranges::range Range>
+template<std::ranges::viewable_range Range>
 constexpr auto operator|(Range&& r, const CircularViewAdaptor& a)
 {
     return a(std::forward<Range>(r)) ;
