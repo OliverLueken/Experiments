@@ -23,6 +23,12 @@ class CircularView : public std::ranges::view_interface<CircularView<Range>> {
                 RangeIteratorType::operator=(firstIt);
             }
         }
+
+        auto operator++(int){
+            CircularIterator temp{*this};
+            ++*this;
+            return temp;
+        }
     };
 
     CircularIterator iter;
@@ -48,6 +54,11 @@ int main() {
 
     std::cout << "unreachable_sentinel == begin() is " << std::boolalpha << (circ.end() == circ.begin()) << '\n';
 
+    auto it = circ.begin();
+    it+=2;
+    std::cout << it->id << '\n';
+
+    std::cout << it++->id << ' ' << it->id << '\n';
 }
 
 /*
@@ -76,9 +87,11 @@ S5()
 16. value in circular view is 1
 unreachable_sentinel == begin() is false
 3
+3 4
 ~S1()
 ~S2()
 ~S3()
 ~S4()
 ~S5()
+
 */
