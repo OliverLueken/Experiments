@@ -68,14 +68,21 @@ int main() {
         ++count;
         if(count == 17) break;
     }
+    std::cout << '\n';
 
     std::cout << "unreachable_sentinel == begin() is " << std::boolalpha << (circ.end() == circ.begin()) << '\n';
+    std::cout << '\n';
 
     auto it = circ.begin();
     it+=2;
-    std::cout << it->id << '\n';
+    std::cout << "Testing operator+=(): ";
+    std::cout << it->id << "==3 is " << std::boolalpha << (it->id==3) << '\n';
+    std::cout << '\n';
 
-    std::cout << it++->id << ' ' << it->id << '\n';
+    std::cout << "Testing operator++(int): ";
+    auto prevVal = it++->id;
+    std::cout << prevVal <<"==3 and " << it->id << "==4 is " << std::boolalpha << (prevVal==3 && it->id==4) << '\n';
+    std::cout << '\n';
 
     count = 1;
     for(const auto& val : vec | CircularView ){
@@ -83,6 +90,7 @@ int main() {
         ++count;
         if(count == 12) break;
     }
+    std::cout << '\n';
 }
 
 /*
@@ -109,9 +117,13 @@ S5()
 14. value in circular view is 4
 15. value in circular view is 5
 16. value in circular view is 1
+
 unreachable_sentinel == begin() is false
-3
-3 4
+
+Testing operator+=(): 3==3 is true
+
+Testing operator++(int): 3==3 and 4==4 is true
+
 1. value in circular view is 1
 2. value in circular view is 2
 3. value in circular view is 3
@@ -123,10 +135,12 @@ unreachable_sentinel == begin() is false
 9. value in circular view is 4
 10. value in circular view is 5
 11. value in circular view is 1
+
 ~S1()
 ~S2()
 ~S3()
 ~S4()
 ~S5()
+
 
 */
