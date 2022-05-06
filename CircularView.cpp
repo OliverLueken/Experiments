@@ -40,13 +40,13 @@ class _CircularView : public std::ranges::view_interface<_CircularView<Range>> {
 
     CircularIterator iter;
 public:
-    _CircularView() = default;
-    _CircularView(Range range)
+    constexpr _CircularView() = default;
+    constexpr _CircularView(Range range)
     : iter{range}
     {}
 
-    CircularIterator begin() const {return iter; }
-    auto             end()   const {return std::unreachable_sentinel; }
+    constexpr CircularIterator begin() const {return iter; }
+    constexpr auto             end()   const {return std::unreachable_sentinel; }
 };
 
 
