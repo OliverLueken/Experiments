@@ -3,7 +3,7 @@
 #include <ranges>
 #include <iterator>
 #include "S.hpp"
-
+#include <iomanip>
 
 template<std::ranges::range Range>
 class CircularView : public std::ranges::view_interface<CircularView<Range>> {
@@ -45,6 +45,9 @@ int main() {
         ++count;
         if(count == 17) break;
     }
+
+    std::cout << "unreachable_sentinel == begin() is " << std::boolalpha << (circ.end() == circ.begin()) << '\n';
+
 }
 
 /*
@@ -71,6 +74,7 @@ S5()
 14. value in circular view is 4
 15. value in circular view is 5
 16. value in circular view is 1
+unreachable_sentinel == begin() is false
 3
 ~S1()
 ~S2()
