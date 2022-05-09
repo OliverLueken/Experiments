@@ -84,7 +84,7 @@ constexpr auto operator|(Range&& r, const ViewDetails::CircleViewAdaptor& circle
 int main() {
     auto vec = std::vector<S>(5);
 
-    std::cout << "\nCircling over circlular view\n";
+    std::cout << "\nCircling over circle view\n";
     auto circ = views::circle(vec);
     auto count = 1;
     for(const auto& val : circ){
@@ -154,7 +154,7 @@ S3()
 S4()
 S5()
 
-Circling over circlular view
+Circling over circle view
 1. value in circle view is 1
 2. value in circle view is 2
 3. value in circle view is 3
