@@ -5,76 +5,81 @@
 #include "S.hpp"
 #include <iomanip>
 
-template<std::ranges::forward_range Range>
-class _CircularView : public std::ranges::view_interface<_CircularView<Range>> {
-    using RangeIteratorType = std::ranges::iterator_t<Range>;
-    class CircularIterator : public RangeIteratorType{
-        RangeIteratorType firstIt{};
-        RangeIteratorType lastIt{};
+namespace ViewDetails{
+    template<std::ranges::forward_range Range>
+    class _CircularView : public std::ranges::view_interface<_CircularView<Range>> {
+        using RangeIteratorType = std::ranges::iterator_t<Range>;
+        class CircularIterator : public RangeIteratorType{
+            RangeIteratorType firstIt{};
+            RangeIteratorType lastIt{};
+        public:
+            constexpr CircularIterator() = default;
+            constexpr CircularIterator(Range& range)
+            : RangeIteratorType{range.begin()}, firstIt{range.begin()}, lastIt{range.end()}{}
+
+            constexpr bool operator==(std::unreachable_sentinel_t){return false;}
+
+            constexpr auto& operator++(){
+                RangeIteratorType::operator++();
+                if(static_cast<RangeIteratorType>(*this) == lastIt){
+                    RangeIteratorType::operator=(firstIt);
+                }
+                return *this;
+            }
+
+            constexpr auto operator++(int){
+                CircularIterator temp{*this};
+                ++*this;
+                return temp;
+            }
+
+            constexpr auto& operator+=(long i){
+                i%=std::distance(firstIt, lastIt);
+                if(i > std::distance(static_cast<RangeIteratorType>(*this), lastIt) ){
+                    RangeIteratorType::operator=(firstIt+i-std::distance(static_cast<RangeIteratorType>(*this), lastIt));
+                }
+                RangeIteratorType::operator+=(i);
+                return *this;
+            }
+        };
+
+        CircularIterator iter;
     public:
-        constexpr CircularIterator() = default;
-        constexpr CircularIterator(Range& range)
-        : RangeIteratorType{range.begin()}, firstIt{range.begin()}, lastIt{range.end()}{}
+        constexpr _CircularView() = default;
+        constexpr _CircularView(Range range)
+        : iter{range}
+        {}
 
-        constexpr bool operator==(std::unreachable_sentinel_t){return false;}
-
-        constexpr auto& operator++(){
-            RangeIteratorType::operator++();
-            if(static_cast<RangeIteratorType>(*this) == lastIt){
-                RangeIteratorType::operator=(firstIt);
-            }
-            return *this;
-        }
-
-        constexpr auto operator++(int){
-            CircularIterator temp{*this};
-            ++*this;
-            return temp;
-        }
-
-        constexpr auto& operator+=(long i){
-            i%=std::distance(firstIt, lastIt);
-            if(i > std::distance(static_cast<RangeIteratorType>(*this), lastIt) ){
-                RangeIteratorType::operator=(firstIt+i-std::distance(static_cast<RangeIteratorType>(*this), lastIt));
-            }
-            RangeIteratorType::operator+=(i);
-            return *this;
-        }
+        constexpr CircularIterator begin() const {return iter; }
+        constexpr auto             end()   const {return std::unreachable_sentinel; }
     };
 
-    CircularIterator iter;
-public:
-    constexpr _CircularView() = default;
-    constexpr _CircularView(Range range)
-    : iter{range}
-    {}
 
-    constexpr CircularIterator begin() const {return iter; }
-    constexpr auto             end()   const {return std::unreachable_sentinel; }
-};
-
-
-struct CircularViewAdaptor{
-    template<std::ranges::viewable_range Range>
-    constexpr auto operator()(Range&& r) const
-    {
-        return _CircularView<Range>(std::forward<Range>(r));
-    }
-};
-CircularViewAdaptor CircularView;
+    struct CircularViewAdaptor{
+        template<std::ranges::viewable_range Range>
+        constexpr auto operator()(Range&& r) const
+        {
+            return _CircularView<Range>(std::forward<Range>(r));
+        }
+    };
+}
+namespace views{
+    ViewDetails::CircularViewAdaptor CircularView;
+}
 
 template<std::ranges::viewable_range Range>
-constexpr auto operator|(Range&& r, const CircularViewAdaptor& a)
+constexpr auto operator|(Range&& r, const ViewDetails::CircularViewAdaptor& circularView)
 {
-    return a(std::forward<Range>(r)) ;
+    return circularView(std::forward<Range>(r)) ;
 }
+
 
 
 int main() {
     auto vec = std::vector<S>(5);
 
     std::cout << "\nCircling over circlular view\n";
-    auto circ = CircularView(vec);
+    auto circ = views::CircularView(vec);
     auto count = 1;
     for(const auto& val : circ){
         std::cout << count << ". value in circular view is " << val.id << '\n';
@@ -103,7 +108,7 @@ int main() {
 
     std::cout << "Circling with pipe operator\n";
     count = 1;
-    for(const auto& val : vec | CircularView ){
+    for(const auto& val : vec | views::CircularView ){
         std::cout << count << ". value in circular view is " << val.id << '\n';
         ++count;
         if(count == 12) break;
@@ -112,7 +117,7 @@ int main() {
 
     std::cout << "Dropping before circling\n";
     count = 1;
-    for(const auto& val : vec | std::views::drop(2) | CircularView ){
+    for(const auto& val : vec | std::views::drop(2) | views::CircularView ){
         std::cout << count << ". value in circular view is " << val.id << '\n';
         ++count;
         if(count == 12) break;
@@ -121,7 +126,7 @@ int main() {
 
     std::cout << "Dropping after circling\n";
     count = 1;
-    for(const auto& val : vec | CircularView | std::views::drop(2) ){
+    for(const auto& val : vec | views::CircularView | std::views::drop(2) ){
         std::cout << count << ". value in circular view is " << val.id << '\n';
         ++count;
         if(count == 12) break;
