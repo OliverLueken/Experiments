@@ -55,7 +55,7 @@ namespace ViewDetails{
     };
 
 
-    struct CircularViewAdaptor{
+    struct CircleViewAdaptor{
         template<std::ranges::viewable_range Range>
         constexpr auto operator()(Range&& r) const
         {
@@ -64,13 +64,13 @@ namespace ViewDetails{
     };
 }
 namespace views{
-    ViewDetails::CircularViewAdaptor circle;
+    ViewDetails::CircleViewAdaptor circle;
 }
 
 template<std::ranges::viewable_range Range>
-constexpr auto operator|(Range&& r, const ViewDetails::CircularViewAdaptor& circularView)
+constexpr auto operator|(Range&& r, const ViewDetails::CircleViewAdaptor& circleView)
 {
-    return circularView(std::forward<Range>(r)) ;
+    return circleView(std::forward<Range>(r)) ;
 }
 
 
