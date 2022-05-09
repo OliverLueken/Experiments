@@ -64,7 +64,7 @@ namespace ViewDetails{
     };
 }
 namespace views{
-    ViewDetails::CircularViewAdaptor CircularView;
+    ViewDetails::CircularViewAdaptor circle;
 }
 
 template<std::ranges::viewable_range Range>
@@ -79,10 +79,10 @@ int main() {
     auto vec = std::vector<S>(5);
 
     std::cout << "\nCircling over circlular view\n";
-    auto circ = views::CircularView(vec);
+    auto circ = views::circle(vec);
     auto count = 1;
     for(const auto& val : circ){
-        std::cout << count << ". value in circular view is " << val.id << '\n';
+        std::cout << count << ". value in circle view is " << val.id << '\n';
         ++count;
         if(count == 17) break;
     }
@@ -108,8 +108,8 @@ int main() {
 
     std::cout << "Circling with pipe operator\n";
     count = 1;
-    for(const auto& val : vec | views::CircularView ){
-        std::cout << count << ". value in circular view is " << val.id << '\n';
+    for(const auto& val : vec | views::circle ){
+        std::cout << count << ". value in circle view is " << val.id << '\n';
         ++count;
         if(count == 12) break;
     }
@@ -117,8 +117,8 @@ int main() {
 
     std::cout << "Dropping before circling\n";
     count = 1;
-    for(const auto& val : vec | std::views::drop(2) | views::CircularView ){
-        std::cout << count << ". value in circular view is " << val.id << '\n';
+    for(const auto& val : vec | std::views::drop(2) | views::circle ){
+        std::cout << count << ". value in circle view is " << val.id << '\n';
         ++count;
         if(count == 12) break;
     }
@@ -126,8 +126,8 @@ int main() {
 
     std::cout << "Dropping after circling\n";
     count = 1;
-    for(const auto& val : vec | views::CircularView | std::views::drop(2) ){
-        std::cout << count << ". value in circular view is " << val.id << '\n';
+    for(const auto& val : vec | views::circle | std::views::drop(2) ){
+        std::cout << count << ". value in circle view is " << val.id << '\n';
         ++count;
         if(count == 12) break;
     }
@@ -144,22 +144,22 @@ S4()
 S5()
 
 Circling over circlular view
-1. value in circular view is 1
-2. value in circular view is 2
-3. value in circular view is 3
-4. value in circular view is 4
-5. value in circular view is 5
-6. value in circular view is 1
-7. value in circular view is 2
-8. value in circular view is 3
-9. value in circular view is 4
-10. value in circular view is 5
-11. value in circular view is 1
-12. value in circular view is 2
-13. value in circular view is 3
-14. value in circular view is 4
-15. value in circular view is 5
-16. value in circular view is 1
+1. value in circle view is 1
+2. value in circle view is 2
+3. value in circle view is 3
+4. value in circle view is 4
+5. value in circle view is 5
+6. value in circle view is 1
+7. value in circle view is 2
+8. value in circle view is 3
+9. value in circle view is 4
+10. value in circle view is 5
+11. value in circle view is 1
+12. value in circle view is 2
+13. value in circle view is 3
+14. value in circle view is 4
+15. value in circle view is 5
+16. value in circle view is 1
 
 unreachable_sentinel == begin() is false
 
@@ -171,43 +171,43 @@ Testing operator++(int):
 5==5 and 1==1 is true
 
 Circling with pipe operator
-1. value in circular view is 1
-2. value in circular view is 2
-3. value in circular view is 3
-4. value in circular view is 4
-5. value in circular view is 5
-6. value in circular view is 1
-7. value in circular view is 2
-8. value in circular view is 3
-9. value in circular view is 4
-10. value in circular view is 5
-11. value in circular view is 1
+1. value in circle view is 1
+2. value in circle view is 2
+3. value in circle view is 3
+4. value in circle view is 4
+5. value in circle view is 5
+6. value in circle view is 1
+7. value in circle view is 2
+8. value in circle view is 3
+9. value in circle view is 4
+10. value in circle view is 5
+11. value in circle view is 1
 
 Dropping before circling
-1. value in circular view is 3
-2. value in circular view is 4
-3. value in circular view is 5
-4. value in circular view is 3
-5. value in circular view is 4
-6. value in circular view is 5
-7. value in circular view is 3
-8. value in circular view is 4
-9. value in circular view is 5
-10. value in circular view is 3
-11. value in circular view is 4
+1. value in circle view is 3
+2. value in circle view is 4
+3. value in circle view is 5
+4. value in circle view is 3
+5. value in circle view is 4
+6. value in circle view is 5
+7. value in circle view is 3
+8. value in circle view is 4
+9. value in circle view is 5
+10. value in circle view is 3
+11. value in circle view is 4
 
 Dropping after circling
-1. value in circular view is 3
-2. value in circular view is 4
-3. value in circular view is 5
-4. value in circular view is 1
-5. value in circular view is 2
-6. value in circular view is 3
-7. value in circular view is 4
-8. value in circular view is 5
-9. value in circular view is 1
-10. value in circular view is 2
-11. value in circular view is 3
+1. value in circle view is 3
+2. value in circle view is 4
+3. value in circle view is 5
+4. value in circle view is 1
+5. value in circle view is 2
+6. value in circle view is 3
+7. value in circle view is 4
+8. value in circle view is 5
+9. value in circle view is 1
+10. value in circle view is 2
+11. value in circle view is 3
 
 ~S1()
 ~S2()
