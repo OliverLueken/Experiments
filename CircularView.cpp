@@ -4,6 +4,7 @@
 #include <iterator>
 #include "S.hpp"
 #include <iomanip>
+#include <algorithm>
 
 namespace ViewDetails{
     template<std::ranges::forward_range Range>
@@ -63,6 +64,11 @@ namespace ViewDetails{
         }
     };
 }
+
+template <typename Range>
+inline constexpr bool std::ranges::enable_borrowed_range<ViewDetails::_CircularView<Range>> = true;
+
+
 namespace views{
     ViewDetails::CircleViewAdaptor circle;
 }
@@ -132,6 +138,11 @@ int main() {
         if(count == 12) break;
     }
     std::cout << '\n';
+
+    auto vec2 = std::vector<int>{1,2,3,4,5,2,1,1};
+    auto range = views::circle(vec2);
+    auto it2 = std::ranges::max_element(range | std::views::take(6));
+    std::cout << "Max element is " << *it2 <<"==5 is " << std::boolalpha << (*it2==5) << '\n';
 }
 
 /*
@@ -209,12 +220,12 @@ Dropping after circling
 10. value in circle view is 2
 11. value in circle view is 3
 
+Max element is 5==5 is true
 ~S1()
 ~S2()
 ~S3()
 ~S4()
 ~S5()
-
 
 
 
