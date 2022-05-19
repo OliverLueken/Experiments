@@ -39,20 +39,49 @@ namespace ViewDetails{
                 if(i > std::distance(static_cast<RangeIteratorType>(*this), lastIt) ){
                     RangeIteratorType::operator=(firstIt+i-std::distance(static_cast<RangeIteratorType>(*this), lastIt));
                 }
-                RangeIteratorType::operator+=(i);
+                else{
+                    RangeIteratorType::operator+=(i);
+                }
+                return *this;
+            }
+
+            constexpr auto& operator--(){
+                if(static_cast<RangeIteratorType>(*this) == firstIt){
+                    RangeIteratorType::operator=(lastIt);
+                }
+                RangeIteratorType::operator--();
+                return *this;
+            }
+
+            constexpr auto operator--(int){
+                CircularIterator temp{*this};
+                --*this;
+                return temp;
+            }
+
+            constexpr auto& operator-=(long i){
+                i%=std::distance(firstIt, lastIt);
+                if(i > std::distance(firstIt, static_cast<RangeIteratorType>(*this)) ){
+                    RangeIteratorType::operator=( lastIt-i+std::distance(firstIt, static_cast<RangeIteratorType>(*this)) );
+                }
+                else{
+                    RangeIteratorType::operator-=(i);
+                }
                 return *this;
             }
         };
 
         CircularIterator iter;
     public:
+        using iterator = CircularIterator;
+
         constexpr _CircularView() = default;
         constexpr _CircularView(Range range)
         : iter{range}
         {}
 
-        constexpr CircularIterator begin() const {return iter; }
-        constexpr auto             end()   const {return std::unreachable_sentinel; }
+        constexpr iterator begin() const {return iter; }
+        constexpr auto     end()   const {return std::unreachable_sentinel; }
     };
 
 
@@ -65,12 +94,17 @@ namespace ViewDetails{
     };
 }
 
+
 template <typename Range>
 inline constexpr bool std::ranges::enable_borrowed_range<ViewDetails::_CircularView<Range>> = true;
 
 
+
 namespace views{
     ViewDetails::CircleViewAdaptor circle;
+
+    template<typename Range>
+    using iterator = ViewDetails::_CircularView<Range&>::iterator;
 }
 
 template<std::ranges::viewable_range Range>
@@ -97,7 +131,7 @@ int main() {
     std::cout << "unreachable_sentinel == begin() is " << std::boolalpha << (circ.end() == circ.begin()) << '\n';
     std::cout << '\n';
 
-    auto it = circ.begin();
+    views::iterator<std::vector<S>> it = circ.begin();
     it+=7;
     std::cout << "Testing operator+=(): ";
     std::cout << it->id << "==3 is " << std::boolalpha << (it->id==3) << '\n';
